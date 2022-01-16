@@ -1,6 +1,17 @@
-const User = {
-    name: '',
-    nick: ''
-}
+// export const newUser = ()=>{
 
-export { User }
+// }
+
+export const User = () => ({
+    nick: '',
+    phone: '',
+    email: '',
+    password: '',
+    name: '',
+    paternalLastName: '',
+    maternalLastName: '',
+    dni: '',
+    birthday: '',
+    photo: null,
+    state: '',
+})

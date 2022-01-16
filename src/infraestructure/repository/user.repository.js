@@ -1,19 +1,25 @@
+import { collection } from '../mongo-db';
+import { ObjectId } from 'mongodb';
 import { User } from '../../domain/user.entities';
 
-const userMock = User
-userMock.name = 'Jimy'
-userMock.nick = 'ev'
+// const userMock = User
+// userMock.name = 'Jimy'
+// userMock.nick = 'ev'
 
-const getUser = () => {
-    return userMock
+export const getUser = async ({ email }) => {
+    return await collection('users').findOne({ email })
 }
 
-const getUsers = () => {
-    return userMock
+// export const getUsers = async () => {
+//     const cursor = await collection('users').find({});
+//     return await cursor.toArray()
+// }
+
+export const addUser = async (newUser) => {
+    const user = await collection('users').insertOne(newUser)
+    return user.insertedId
 }
 
-const addUser = () => {
-    return userMock
+export const existUser = async ({ email }) => {
+    return await collection('users').findOne({ email })
 }
-
-export { getUser }

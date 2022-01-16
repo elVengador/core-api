@@ -6,29 +6,23 @@ dotenv.config()
 const dbHost = process.env.DB_HOST
 const dbUser = process.env.DB_USER
 const dbPass = process.env.DB_PASS
+const dbName = process.env.DB_NAME
 
-const listDatabases = async (client) => {
-    const databasesList = await client.db().admin().listDatabases();
-
-    console.log("Databases:");
-    databasesList.databases.forEach(db => console.log(` - ${db.name}`));
-};
+let dbClient = null
 
 const main = async () => {
-    const uri = `mongodb+srv://${dbUser}:${dbPass}@cluster0.cvrvg.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`
-    const client = new MongoClient(uri);
     try {
-        // Connect to the MongoDB cluster
-        await client.connect();
-
-        // Make the appropriate DB calls
-        await listDatabases(client);
-
+        const uri = `mongodb+srv://${dbUser}:${dbPass}@${dbHost}?retryWrites=true&w=majority`
+        dbClient = new MongoClient(uri);
+        await dbClient.connect();
+        console.log(">. MongoDB connected successfull");
     } catch (e) {
         console.error(e);
     } finally {
-        await client.close();
+        // await dbClient.close();
     }
 }
 
-main().catch(console.error);
+export const collection = name => dbClient.db(dbName).collection(name)
+
+main()
