@@ -11,7 +11,15 @@ export const authSchema = `#graphql
         password:String!
     }
 
-    type SignInOutput{
+    input SignOffInput{
+        currentRefreshToken:String!
+    }
+
+    input RefreshTokenInput{
+        currentRefreshToken:String!
+    }
+
+    type TokensOutput{
         accessToken:String,
         refreshToken:String
     }
@@ -23,5 +31,8 @@ export const authQuery = `#graphql
 
 export const authMutation = `#graphql
     signUp(signUpInput:SignUpInput!):String
-    signIn(signInInput:SignInInput!):SignInOutput
+    signIn(signInInput:SignInInput!):TokensOutput
+    signOff(signOffInput:SignOffInput!):Boolean
+    refreshToken(refreshTokenInput:RefreshTokenInput!):TokensOutput
+    privateContent:String
 `

@@ -2,5 +2,8 @@ import * as authController from '../../../application/controllers/auth.controlle
 
 export const authResolver = {
     signUp: authController.signUp,
-    signIn: authController.signIn
+    signIn: authController.signIn,
+    signOff: authController.signOff,
+    refreshToken: authController.refreshToken,
+    privateContent: authController.privateContent
 }

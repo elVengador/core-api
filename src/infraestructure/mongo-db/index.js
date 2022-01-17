@@ -1,12 +1,6 @@
-import dotenv from 'dotenv'
 import { MongoClient } from 'mongodb';
 
-dotenv.config()
-
-const dbHost = process.env.DB_HOST
-const dbUser = process.env.DB_USER
-const dbPass = process.env.DB_PASS
-const dbName = process.env.DB_NAME
+import { dbHost, dbUser, dbPass, dbName } from '../../core.enviroments';
 
 let dbClient = null
 
