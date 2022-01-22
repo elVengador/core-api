@@ -7,9 +7,10 @@ import * as errorUtil from '../utils/error.util';
 
 const YEAR_IN_SECONDS = 365 * 24 * 60 * 60
 
-export const signUp = async ({ signUpInput }) => {
+export const signUp = async (parent, { signUpInput }) => {
     try {
         const { nick, email, password } = signUpInput
+        console.log('ARG:', nick, email, password);
         const existUser = await userRepository.getUser({ email })
         if (existUser) { return errorUtil.NEW('Email ya esta en uso') }
 
@@ -19,12 +20,14 @@ export const signUp = async ({ signUpInput }) => {
         newUser.password = await encriptPassword({ password })
         return await userRepository.addUser(newUser)
     } catch (err) {
+        console.log(err);
         return errorUtil.SERVER_ERROR()
     }
 }
 
-export const signIn = async ({ signInInput }) => {
+export const signIn = async (parent, { signInInput }) => {
     try {
+        console.log('sign in');
         const { email, password } = signInInput
         const user = await userRepository.existUser({ email })
         if (!user) { return errorUtil.FIELD_INVALID('User') }
@@ -58,11 +61,12 @@ export const signOff = async ({ signOffInput }) => {
     }
 }
 
-export const refreshToken = async ({ refreshTokenInput }) => {
+export const refreshToken = async (parent, { refreshTokenInput }) => {
     try {
-        const { currentRefreshToken } = refreshTokenInput
+        const { currentRefreshToken, retryNumber } = refreshTokenInput
+        if (retryNumber > 1) { return errorUtil.NEW('MANY_TRYS') }
         if (!currentRefreshToken) { return errorUtil.BAD_REQUEST() }
-
+        console.log(' REFRESH_TOKEN:', currentRefreshToken);
         const userId = await verifyRefreshToken({ refreshToken: currentRefreshToken })
         const validRefreshToken = await tokenRepository.getRefresToken({ userId })
         if (currentRefreshToken !== validRefreshToken) { return errorUtil.UNAUTHORIZED() }

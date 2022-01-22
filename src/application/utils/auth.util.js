@@ -10,9 +10,13 @@ export const matchPassword = async ({ password, user }) => {
 }
 
 export const saveUserIdFromToken = (req, userId) => {
+    console.log('save');
     req.app.set('userId', userId)
 }
 
 export const getUserIdFromToken = (req) => {
-    return req.app.get('userId')
+    const userId = req.app.get('userId')
+    if (!userId) { return errorUtil.BAD_REQUEST() }
+    console.log('userID:', userId);
+    return userId
 }

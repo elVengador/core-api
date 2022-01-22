@@ -1,10 +1,12 @@
+import { locatedError } from 'graphql';
 import jwt from 'jsonwebtoken'
 
 import { accessTokenSecret, refreshTokenSecret } from '../../core.enviroments';
+import { SERVER_ERROR, UNAUTHORIZED } from './error.util';
 
 export const signAccessToken = ({ userId, rol, aud = 'app' }) => {
     return new Promise((resolve, reject) => {
-        const expiresIn = '15m'
+        const expiresIn = '1m'
         const issuer = 'vauth'
         const payload = { rol, aud, sub: userId }
         const secret = accessTokenSecret
@@ -20,13 +22,19 @@ export const signAccessToken = ({ userId, rol, aud = 'app' }) => {
 export const verifyAccessToken = ({ accessToken }) => {
     return new Promise((resolve, reject) => {
         try {
+            console.log('will verify', accessToken, accessTokenSecret);
             jwt.verify(accessToken, accessTokenSecret, (err, payload) => {
-                if (err && err?.name === 'JsonWebTokenError') { return reject('Token invalid') }
-                if (err) { return reject(err.message) }
+                console.log('will compare');
+                console.log('ERRRRR', err, '\n -->', err?.name, '\n');
+                if (err && err?.name === 'JsonWebTokenError') { return reject(UNAUTHORIZED()) }
+                if (err && err?.name === 'TokenExpiredError') { return reject(UNAUTHORIZED()) }
+                if (err) { return reject(SERVER_ERROR()) }
+                console.log('will resolver');
                 return resolve(payload.sub)
             })
         } catch (err) {
-            return reject(new Error('Not authorization'))
+            // return reject(new Error('Not authorization'))
+            return reject(SERVER_ERROR())
         }
     })
 }
@@ -40,7 +48,6 @@ export const signRefreshToken = ({ userId, aud = 'app' }) => {
         const options = { expiresIn, issuer }
         jwt.sign(payload, secret, options, (err, token) => {
             if (err || !token) { return reject(new Error('Invalid')) }
-            console.log('resolve', token);
             resolve(token)
         })
     })

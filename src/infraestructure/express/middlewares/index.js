@@ -1,5 +1,6 @@
+import { locatedError } from "graphql"
 import { saveUserIdFromToken } from "../../../application/utils/auth.util"
-import { NEW, SERVER_ERROR, UNAUTHORIZED } from "../../../application/utils/error.util"
+import { JWT_EXPIRED, NEW, SERVER_ERROR, UNAUTHORIZED } from "../../../application/utils/error.util"
 import { verifyAccessToken } from "../../../application/utils/jwt.util"
 
 const getTokenFromHeader = (header) => {
@@ -7,8 +8,11 @@ const getTokenFromHeader = (header) => {
     return token
 }
 
-const isFreeContent = (operationName) => {
-    //operationName
+const isFreeContent = (body) => {
+    if (body.operationName === 'operationName:') {
+        console.log('operationName:', body.operationName);
+        return ['signUp', 'signIn'].includes(operationName)
+    }
     // example Query
     // query: '\n' +
     // '    mutation($nick:String!,$email:String!,$password:String!){\n' +
@@ -18,43 +22,42 @@ const isFreeContent = (operationName) => {
     // '            password:$password\n' +
     // '        })\n' +
     // '    }\n'
-    // const isFree = ['signUp', 'signIn']
-    //     .map(cur => operationName.includes(cur))
+    const isFree = ['signUp', 'signIn']
+        .map(cur => body.query.includes(cur))
+        .filter(cur => cur)
+        .length > 0
 
-    const isFree = ['signUp', 'signIn'].includes(operationName)
-    // console.log('isFree', isFree);
-    // const tt = isFree
-    //     .filter(cur => cur)
-    //     .length > 0
-
-    // console.log('isFree', isFree);
-    // console.log('tt', isFree);
     return isFree
 }
 
 export const auth = async (req, res, next) => {
     try {
-        // console.log('REQ:', req.body);
-        const query = req.body?.query
         // console.log('--- -- -- --- -->\n\n', req.body.operationName);
-        if (isFreeContent(query)) { return next() }
+        if (isFreeContent(req.body)) { return next() }
 
         if (!req.headers['authorization']) { return next(UNAUTHORIZED()) }
+        // if (!req.headers['authorization']) { return next(UNAUTHORIZED()) }
         const accessToken = getTokenFromHeader(req.headers['authorization'])
         const userId = await verifyAccessToken({ accessToken })
         saveUserIdFromToken(req, userId)
         if (!userId) { return UNAUTHORIZED() }
         next();
     } catch (err) {
+        if (err === 'jwt expired') { return reject(locatedError(err)) }
+
+        console.log('|', err, '|');
         next(SERVER_ERROR())
     }
 }
 
 export const error = (err, req, res, next) => {
-    if (err.message === 'Unauthorized') { return res.status(400).json({ 'state': err.message }) }
+    return res.status(400).send(locatedError('uyu'))
+    // if (err.message === 'Unauthorized') { return res.status(400).json({ data: null, error: err.message }) }
+    // if (err.message === 'Jwt expired') { return res.status(400).json({ data: null, error: { message: err.message } }) }
 
-    console.log('----- ----- ----->>> err:\n', err.message, '\n<<<----- ----- -----\n');
-    res.status(500).json({ 'state': 'BAD' })
+    // console.log('----- ----- ----->>> err:\n', err.message, err.stack, '\n<<<----- ----- -----\n');
+    // res.status(500).json({ 'state': 'BAD' })
     // next() : default handling error ny nodeJs
     // IMPORTANT!!: if the error is knowing ? you must control what you respond : next()
+    // next(err)
 }
