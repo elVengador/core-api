@@ -6,7 +6,7 @@ import { SERVER_ERROR, UNAUTHORIZED } from './error.util';
 
 export const signAccessToken = ({ userId, rol, aud = 'app' }) => {
     return new Promise((resolve, reject) => {
-        const expiresIn = '1m'
+        const expiresIn = '15m'
         const issuer = 'vauth'
         const payload = { rol, aud, sub: userId }
         const secret = accessTokenSecret
@@ -41,7 +41,7 @@ export const verifyAccessToken = ({ accessToken }) => {
 
 export const signRefreshToken = ({ userId, aud = 'app' }) => {
     return new Promise((resolve, reject) => {
-        const expiresIn = '1y'
+        const expiresIn = '30 days'
         const issuer = 'vauth'
         const payload = { aud, sub: userId }
         const secret = refreshTokenSecret
@@ -70,7 +70,6 @@ export const getUserIdByAccessToken = (accessToken) => {
     return new Promise((resolve, reject) => {
         try {
             jwt.verify(accessToken, accessTokenSecret, (err, payload) => {
-                console.log('ERR:', err);
                 if (err && err?.name === 'JsonWebTokenError') { return resolve(null) }
                 if (err && err?.name === 'TokenExpiredError') { return resolve(null) }
                 if (err) { return reject(SERVER_ERROR()) }
