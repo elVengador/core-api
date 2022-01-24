@@ -66,3 +66,20 @@ export const verifyRefreshToken = ({ refreshToken }) => {
     })
 }
 
+export const getUserIdByAccessToken = (accessToken) => {
+    return new Promise((resolve, reject) => {
+        try {
+            jwt.verify(accessToken, accessTokenSecret, (err, payload) => {
+                console.log('ERR:', err);
+                if (err && err?.name === 'JsonWebTokenError') { return resolve(null) }
+                if (err && err?.name === 'TokenExpiredError') { return resolve(null) }
+                if (err) { return reject(SERVER_ERROR()) }
+                return resolve(payload.sub)
+            })
+        } catch (err) {
+            // return reject(new Error('Not authorization'))
+            console.log('ERR_GET_USER_BY_TOKEN:', err);
+            return reject(SERVER_ERROR())
+        }
+    })
+}
