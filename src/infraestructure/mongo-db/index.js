@@ -9,7 +9,7 @@ const main = async () => {
         const uri = `mongodb+srv://${dbUser}:${dbPass}@${dbHost}?retryWrites=true&w=majority`
         dbClient = new MongoClient(uri);
         await dbClient.connect();
-        console.log(">. MongoDB connected successfull");
+        console.log("[💽 MongoDB]: connected successfull");
     } catch (e) {
         console.error(e);
     } finally {
