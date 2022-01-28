@@ -1,12 +1,12 @@
 import { MongoClient } from 'mongodb';
 
-import { dbHost, dbUser, dbPass, dbName } from '../../core.enviroments';
+import { dbHost, dbUser, dbPass, dbName, dbPort } from '../../core.enviroments';
 
 let dbClient = null
 
 const main = async () => {
     try {
-        const uri = `mongodb+srv://${dbUser}:${dbPass}@${dbHost}?retryWrites=true&w=majority`
+        const uri = `mongodb://${dbUser}:${dbPass}@${dbHost}:${dbPort}?retryWrites=true&w=majority`
         dbClient = new MongoClient(uri);
         await dbClient.connect();
         console.log("[💽 MongoDB]: connected successfull");
