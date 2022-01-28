@@ -7,6 +7,8 @@ import { formatError } from '../../application/utils/error.util';
 import { getUserIdFromToken } from '../../application/utils/auth.util';
 import { getUserIdByAccessToken, verifyAccessToken } from '../../application/utils/jwt.util';
 
+console.log('=== === =>>');
+
 export const startApolloServer = async (typeDefs, resolvers, port) => {
     const httpServer = http.createServer(app);
     const server = new ApolloServer({
