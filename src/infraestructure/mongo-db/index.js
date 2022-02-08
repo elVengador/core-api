@@ -8,8 +8,8 @@ const main = async () => {
     try {
         const uri = `mongodb://${dbUser}:${dbPass}@${dbHost}:${dbPort}?retryWrites=true&w=majority`
         console.log('> > connect to URI:', uri);
-        dbClient = new MongoClient(uri);
-        // dbClient = new MongoClient(uri, { useUnifiedTopology: true });
+        // dbClient = new MongoClient(uri);
+        dbClient = new MongoClient(uri, { useUnifiedTopology: true });
         await dbClient.connect();
         console.log("[💽 MongoDB]: connected successfull");
     } catch (err) {
