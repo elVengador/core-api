@@ -69,7 +69,7 @@ export const refreshToken = async (parent, { refreshTokenInput }) => {
         console.log(' REFRESH_TOKEN:', currentRefreshToken);
         const userId = await verifyRefreshToken({ refreshToken: currentRefreshToken })
         const validRefreshToken = await tokenRepository.getRefresToken({ userId })
-        if (currentRefreshToken !== validRefreshToken) { return errorUtil.UNAUTHORIZED() }
+        if (currentRefreshToken !== validRefreshToken) { return errorUtil.SESSION_EXPIRED() }
 
         const accessToken = await signAccessToken({ userId, rol: 'dev' })
         const refreshToken = await signRefreshToken({ userId })

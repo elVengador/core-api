@@ -2,8 +2,11 @@ const MESSAGES = {
     BAD_REQUEST: 'Bad Request',
     FIELD_IS_BEING_USED: 'Field is being used',
     FIELD_INVALID: 'Field invalid',
-    JWT_EXPIRED: 'Jwt expired',
+    JWT_EXPIRED: 'Jwt expired', // DEPRECATED check to delete
+    /** When access token is invalid and need other access token with refresh token */
     UNAUTHORIZED: 'Unauthorized',
+    /** When refresh token is invalid and frontend need to redirect to signIn */
+    SESSION_EXPIRED: 'Session Expired',
     SERVER_ERROR: 'Server Error'
 }
 
@@ -13,6 +16,7 @@ const ERRORS = [
     { name: MESSAGES.FIELD_INVALID, statusCode: 400 },
     { name: MESSAGES.JWT_EXPIRED, statusCode: 400 },
     { name: MESSAGES.UNAUTHORIZED, statusCode: 401 },
+    { name: MESSAGES.SESSION_EXPIRED, statusCode: 401 },
     { name: MESSAGES.SERVER_ERROR, statusCode: 500 },
 ]
 
@@ -23,6 +27,7 @@ export const FIELD_IS_BEING_USED = (field) => new Error(MESSAGES.FIELD_IS_BEING_
 export const FIELD_INVALID = (field) => new Error(MESSAGES.FIELD_INVALID)
 export const JWT_EXPIRED = () => new Error(MESSAGES.JWT_EXPIRED)
 export const UNAUTHORIZED = () => new Error(MESSAGES.UNAUTHORIZED)
+export const SESSION_EXPIRED = () => new Error(MESSAGES.SESSION_EXPIRED)
 export const SERVER_ERROR = () => new Error(MESSAGES.SERVER_ERROR)
 
 
