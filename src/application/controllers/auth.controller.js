@@ -4,13 +4,13 @@ import * as tokenRepository from "../../infraestructure/repository/redis/token.r
 import { encriptPassword, matchPassword } from "../utils/auth.util";
 import { signAccessToken, verifyAccessToken, signRefreshToken, verifyRefreshToken } from "../utils/jwt.util";
 import * as errorUtil from '../utils/error.util';
+import { waitMilliseconds } from "../utils/timer";
 
 const YEAR_IN_SECONDS = 365 * 24 * 60 * 60
 
 export const signUp = async (parent, { signUpInput }) => {
     try {
         const { nick, email, password } = signUpInput
-        console.log('ARG:', nick, email, password);
         const existUser = await userRepository.getUser({ email })
         if (existUser) { return errorUtil.NEW('Email ya esta en uso') }
 
@@ -27,7 +27,7 @@ export const signUp = async (parent, { signUpInput }) => {
 
 export const signIn = async (parent, { signInInput }) => {
     try {
-        console.log('sign in');
+        await waitMilliseconds(1000)
         const { email, password } = signInInput
         const user = await userRepository.existUser({ email })
         if (!user) { return errorUtil.FIELD_INVALID('User') }
