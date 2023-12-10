@@ -6,10 +6,11 @@ let dbClient = null
 
 const main = async () => {
     try {
+        const productionUri = `mongodb+srv://${dbUser}:${dbPass}@${dbHost}/?retryWrites=true&w=majority`
         const uri = `mongodb://${dbUser}:${dbPass}@${dbHost}:${dbPort}?retryWrites=true&w=majority`
-        console.log('> > connect to URI:', uri);
-        dbClient = new MongoClient(uri);
-        // dbClient = new MongoClient(uri, { useUnifiedTopology: true });
+        const selectedUri = process.env.NODE_ENV === "development"?uri:productionUri
+        console.log('> > connect to URI:', selectedUri);
+        dbClient = new MongoClient(selectedUri);
         await dbClient.connect();
         console.log("[💽 MongoDB]: connected successfull");
     } catch (err) {
