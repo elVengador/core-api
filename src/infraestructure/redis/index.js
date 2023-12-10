@@ -1,10 +1,13 @@
 import { createClient } from 'redis'
-import { dbRedisHost, dbRedisPort,dbRedisPassword } from '../../core.enviroments';
+import { dbRedisHost, dbRedisPort,dbRedisPassword ,dbRedisUser} from '../../core.enviroments';
 
 // redis[s]://[[username][:password]@][host][:port][/db-number]
+const productionUri = `redis://${dbRedisUser}:${dbRedisPassword}@${dbRedisHost}:${dbRedisPort}`
 const url = `redis://:${dbRedisPassword}@${dbRedisHost}:${dbRedisPort}`
-console.log({url})
-const client = createClient({url});
+const selectedUri = process.env.NODE_ENV !== "development"?url:productionUri
+console.log({selectedUri})
+
+const client = createClient({url:productionUri});
 
 const main = async () => {
     await client.connect()
