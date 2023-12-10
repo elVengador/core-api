@@ -4,10 +4,10 @@ import { dbRedisHost, dbRedisPort,dbRedisPassword ,dbRedisUser} from '../../core
 // redis[s]://[[username][:password]@][host][:port][/db-number]
 const productionUri = `redis://${dbRedisUser}:${dbRedisPassword}@${dbRedisHost}:${dbRedisPort}`
 const url = `redis://:${dbRedisPassword}@${dbRedisHost}:${dbRedisPort}`
-const selectedUri = process.env.NODE_ENV !== "development"?url:productionUri
+const selectedUri = process.env.NODE_ENV === "development"?url:productionUri
 console.log({selectedUri})
 
-const client = createClient({url:productionUri});
+const client = createClient({url:selectedUri});
 
 const main = async () => {
     await client.connect()
